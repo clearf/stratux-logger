@@ -206,3 +206,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+venv/
+*.pyc
+*.egg-info/
+dist/
+settings.cfg
+*.log*
