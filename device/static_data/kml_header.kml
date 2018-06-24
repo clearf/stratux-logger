@@ -25,41 +25,34 @@
 	        <altitudeMode>absolute</altitudeMode>
 	        <extrude>1</extrude>
 	        <gx:interpolate>1</gx:interpolate>
-	        <when></when>
-	        <gx:coord></gx:coord>
 	      </gx:Track>
 	</Placemark>
 	<Placemark>
 	<name>Start</name>
 	<Point>
-		<coordinates></coordinates>
 	</Point>
 	</Placemark>
 	<ExtendedData>
 		<SchemaData>
 			<gx:SimpleArrayData name="acc_horiz">
-				<gx:value></gx:value>
 			</gx:SimpleArrayData>
 			<gx:SimpleArrayData name="acc_vert">
-				<gx:value></gx:value>
 			</gx:SimpleArrayData>
 			<gx:SimpleArrayData name="course">
-				<gx:value></gx:value>
 			</gx:SimpleArrayData>
 			<gx:SimpleArrayData name="speed_kts">
-				<gx:value></gx:value>
 			</gx:SimpleArrayData>
 			<gx:SimpleArrayData name="altitude">
-				<gx:value></gx:value>
 			</gx:SimpleArrayData>
 			<gx:SimpleArrayData name="bank">
-				<gx:value></gx:value>
 			</gx:SimpleArrayData>
 			<gx:SimpleArrayData name="pitch">
-				<gx:value></gx:value>
 			</gx:SimpleArrayData>
 			<gx:SimpleArrayData name="g_load">
-				<gx:value></gx:value>
+			</gx:SimpleArrayData>
+			<gx:SimpleArrayData name="baro_altitude">
+			</gx:SimpleArrayData>
+			<gx:SimpleArrayData name="mag_heading">
 			</gx:SimpleArrayData>
 		</SchemaData>
 		<Data name="source">
