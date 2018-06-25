@@ -2,16 +2,16 @@ from device.models import Situation, Flight
 from bs4 import BeautifulSoup
 
 class ProcessFlight(): 
-    def __init__(self, db, flight_id):
-        self.db = db
+    def __init__(self, app, flight_id):
+        self.app = app
         self.flight_id = flight_id
-        self.flight = self.db.session.query(Flight).filter_by(id = 
+        self.flight = self.app.db.session.query(Flight).filter_by(id = 
                 self.flight_id).first()
         self.max_g = None
         self.min_g = None
         import os
         # XXX Todo make this configurable
-        kml_header = 'kml_header.kml'
+        kml_header = app.config['KML_HEADER']
         current_dirname = os.path.dirname(__file__)
         self.header_filename = os.path.join(current_dirname, 'static_data', kml_header)
         

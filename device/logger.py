@@ -1,15 +1,13 @@
 from datetime import datetime
-import urllib, json
+import urllib.request
+import json
 from device.models import Flight, Situation
 
 class StratuxLogger(): 
-    def __init__(self, db, stratux_hostname="localhost", 
-            stratux_port="80"): 
-        self.stratux_hostname=stratux_hostname
-        self.stratux_port = stratux_port
-        self.db = db
-        self.base_url = "http://%s:%s/" % (self.stratux_hostname, 
-                self.stratux_port)
+    def __init__(self, app): 
+        self.app = app
+        self.base_url = "http://%s:%s/" % (app.config['STRATUX_HOSTNAME'],
+                app.config['STRATUX_PORT'])
         self.current_snapshot = {}
         return
 
@@ -22,14 +20,12 @@ class StratuxLogger():
         return data
 
     def saveSnapshotToDb(self, flight_id): 
-        if not self.current_snapshot:
-            self.getSituationFromStratux()
-
-
+        # XXX add exception handling
+        self.getSituationFromStratux()
         situation = Situation(**self.current_snapshot)
         situation.StratuxTimeStamp = datetime.now()
         situation.flight_id = flight_id
-        self.db.session.add(situation)
+        self.app.db.session.add(situation)
 
     def logFlight(self): 
         # Setup flight
@@ -40,9 +36,9 @@ class StratuxLogger():
 
         flight = Flight()
         flight.flight_start = flight_start
-        flight.n_number = "N12345" # XXX Make a config option
-        self.db.session.add(flight)
-        self.db.session.flush()
+        flight.n_number = self.app.config.get('N_NUMBER')
+        self.app.db.session.add(flight)
+        self.app.db.session.flush()
         
         return flight.id
         
