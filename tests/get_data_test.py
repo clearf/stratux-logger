@@ -1,19 +1,21 @@
 import os, json, sys
-import logging as lg, unittest
+import logging as lg
+import unittest
 from bs4 import BeautifulSoup
 from device.logger import StratuxLogger
 from device.processor import ProcessFlight
 from device.models import Flight, Situation
-from device.db import Db
+from device.settings import TestConfig
+from device.app import create_app
 from datetime import datetime
 from sqlalchemy import inspect
 
 
 class TestLogStratux(unittest.TestCase):
     def setUp(self):
-        self.db = Db()
-        self.db.create_tables()
-        self.stratux_port = 5000 
+        
+        self.app = create_app(config_object = TestConfig)
+        self.app.db.create_tables()
         lg.basicConfig( stream=sys.stderr )
         lg.getLogger("TestLogStratux").setLevel(lg.INFO)
         self.log = lg.getLogger("TestLogStratux")
@@ -27,7 +29,7 @@ class TestLogStratux(unittest.TestCase):
           f.close()
         
     def test_we_can_get_a_snapshot_from_webserver(self):
-        stl = StratuxLogger(db=self.db, stratux_port=self.stratux_port)
+        stl = StratuxLogger(self.app)
         ahrs_data = stl.getSituationFromStratux(); 
 
         
@@ -35,21 +37,21 @@ class TestLogStratux(unittest.TestCase):
         self.assertEqual(self.static_ahrs_data,ahrs_data)
 
     def test_we_can_save_a_flight_to_the_database(self):
-        stl = StratuxLogger(db=self.db, stratux_port=self.stratux_port)
+        stl = StratuxLogger(self.app)
         flight_id = stl.logFlight()
-        flight = self.db.session.query(Flight).first()
+        flight = self.app.db.session.query(Flight).first()
         self.assertTrue(flight)
         self.assertTrue(flight_id)
 
     def test_we_can_save_a_snapshot_to_the_database(self):
-        stl = StratuxLogger(db=self.db, stratux_port=self.stratux_port)
+        stl = StratuxLogger(self.app)
         flight_id = stl.logFlight()
         self.log.debug("Flight ID: {0}".format(flight_id))
         stl.saveSnapshotToDb(flight_id)
 
-        db_snapshot = self.db.session.query(Situation).first()
+        db_snapshot = self.app.db.session.query(Situation).first()
 
-        flights = self.db.session.query(Flight).all()
+        flights = self.app.db.session.query(Flight).all()
 
         self.log.debug("Flights: {0}".format(flights))
 
@@ -68,24 +70,31 @@ class TestLogStratux(unittest.TestCase):
             if key != "id" and key != "flight_id" and key != "StratuxTimeStamp":
                 self.assertEqual(self.static_ahrs_data[key], db_snapshot_dict[key])
 
+class TestRunApp(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app(config_object = TestConfig)
+        self.app.db.create_tables()
+        lg.basicConfig( stream=sys.stderr )
+        lg.getLogger("TestLogStratux").setLevel(lg.INFO)
+        self.log = lg.getLogger("TestLogStratux")
+
 class TestProcessFlight(unittest.TestCase):
     def setUp(self):
-        self.db = Db()
-        self.db.create_tables()
-        self.stratux_port = 5000 
+        self.app = create_app(config_object = TestConfig)
+        self.app.db.create_tables()
 
         lg.basicConfig( stream=sys.stderr )
         lg.getLogger("TestProcessFlight").setLevel(lg.INFO)
         self.log = lg.getLogger("TestProcessFlight")
 
         # Populate test data
-        stl = StratuxLogger(db=self.db, stratux_port=self.stratux_port)
+        stl = StratuxLogger(self.app)
         flight_id = stl.logFlight()
         self.log.debug("Flight ID: {0}".format(flight_id))
         stl.saveSnapshotToDb(flight_id)
 
         # Setup our processor
-        self.process_flight = ProcessFlight(db=self.db, flight_id = flight_id)
+        self.process_flight = ProcessFlight(self.app, flight_id = flight_id)
 
         current_dirname = os.path.dirname(__file__)
         self.reference_dir = os.path.join(current_dirname, 'reference_data')
