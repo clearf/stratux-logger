@@ -26,13 +26,6 @@ class DevConfig(Config):
     """Development configuration, i.e., we're running on a laptop
     but connecting to a live stratux
     """
-
-    #try:
-        #from dotenv import load_dotenv
-        #dotenv_path = os.path.join(Config.PROJECT_ROOT, '.env')
-        #load_dotenv(dotenv_path)
-    #except ImportError as e:
-        #print("We don't actually need this in production %s" % e)
     ENV = 'dev'
     STRATUX_PORT = 80
     STRATUX_HOSTNAME = "192.168.10.1" 
@@ -40,6 +33,7 @@ class DevConfig(Config):
     db_name = 'dev.db'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(Config.DB_PATH, 
         db_name))
+    print(SQLALCHEMY_DATABASE_URI)
 
 
 class TestConfig(Config):
