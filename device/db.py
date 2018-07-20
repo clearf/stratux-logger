@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
-#from sqlalchemy.engine.url import URL
+
 
 from .models import Base
 
@@ -16,8 +17,8 @@ class Db():
         self.engine = create_engine(
            app.config['SQLALCHEMY_DATABASE_URI'],
                 echo=app.config['DEBUG'],)
-        Session = sessionmaker(bind=self.engine)
-        self.session = Session()
+        session_factory = sessionmaker(bind=self.engine)
+        self.Session = scoped_session(session_factory)
 
 
     def create_tables(self):

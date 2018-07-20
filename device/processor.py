@@ -5,8 +5,11 @@ class ProcessFlight():
     def __init__(self, app, flight_id):
         self.app = app
         self.flight_id = flight_id
-        self.flight = self.app.db.session.query(Flight).filter_by(id = 
+        session = self.app.db.Session()
+        self.flight = session.query(Flight).filter_by(id = 
                 self.flight_id).first()
+        # We set this in here so that we can access it later (without persisting the db connection)
+        self.situations = self.flight.situations
         self.max_g = None
         self.min_g = None
         import os
@@ -14,7 +17,7 @@ class ProcessFlight():
         kml_header = app.config['KML_HEADER']
         current_dirname = os.path.dirname(__file__)
         self.header_filename = os.path.join(current_dirname, 'static_data', kml_header)
-        
+        self.app.db.Session.remove()
         
 
     def set_max_min_g(self, AHRSGLoad): 
@@ -24,7 +27,7 @@ class ProcessFlight():
             self.min_g = AHRSGLoad
 
     def get_max_min_g(self):
-        for situation in self.flight.situations:
+        for situation in self.situations:
             self.set_max_min_g(situation.AHRSGLoad)
         return self.max_g, self.min_g
 
@@ -40,12 +43,12 @@ class ProcessFlight():
             kml_header = BeautifulSoup(data, 'lxml-xml')
 
         start_placemark = kml_header.Document.Placemark.find_next("Placemark").Point
-        first_situation = self.flight.situations[0]
+        first_situation = self.situations[0]
         initial_coords = "{0} {1}".format(first_situation.GPSLongitude, 
                 first_situation.GPSLatitude)
         append_value(start_placemark, 'coordinates', initial_coords)
         
-        for situation in self.flight.situations:
+        for situation in self.situations:
             self.set_max_min_g(situation.AHRSGLoad)
 
             track_log = kml_header.Document.Placemark.find("gx:Track")

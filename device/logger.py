@@ -12,20 +12,30 @@ class StratuxLogger():
         return
 
     def getSituationFromStratux(self): 
-        parameters = {}
-        url = self.base_url + "getSituation"
-        response = urllib.request.urlopen(url)
-        data = json.loads(response.read())
-        self.current_snapshot = data;
-        return data
+        try:
+            parameters = {}
+            url = self.base_url + "getSituation"
+            self.app.log.debug("URL " + url)
+            response = urllib.request.urlopen(url)
+            data = json.loads(response.read())
+            self.current_snapshot = data;
+            return data
+        except Exception as e: 
+            print("Cannot getSituation: {0}".format(e))
+            return None
 
-    def saveSnapshotToDb(self, flight_id): 
-        # XXX add exception handling
-        self.getSituationFromStratux()
-        situation = Situation(**self.current_snapshot)
-        situation.StratuxTimeStamp = datetime.now()
-        situation.flight_id = flight_id
-        self.app.db.session.add(situation)
+    def saveSnapshotToDb(self, flight_id, *args, **kwargs): 
+        if self.getSituationFromStratux(): 
+            situation = Situation(**self.current_snapshot)
+            situation.StratuxTimeStamp = datetime.now()
+            situation.flight_id = flight_id
+            try:
+                session = self.app.db.Session()
+                session.add(situation)
+                session.commit()
+                self.app.db.Session.remove()
+            except Exception as e: 
+                print(e)
 
     def logFlight(self): 
         # Setup flight
@@ -37,14 +47,11 @@ class StratuxLogger():
         flight = Flight()
         flight.flight_start = flight_start
         flight.n_number = self.app.config.get('N_NUMBER')
-        self.app.db.session.add(flight)
-        self.app.db.session.flush()
+        session = self.app.db.Session()
+        session.add(flight)
+        session.flush()
+        session.commit()
+        flight_id = flight.id
+        self.app.db.Session.remove()
         
-        return flight.id
-        
-
-        #self.getSituationFromStratux()
-        #self.saveSnapshotToDb()
-
-
-    
+        return flight_id
