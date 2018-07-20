@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+ <Document>
+  <open>
+   1
+  </open>
+  <visibility>
+   1
+  </visibility>
+  <Style id="trackStyle">
+   <LineStyle>
+    <color>
+     ffDB9034
+    </color>
+    <width>
+     4
+    </width>
+   </LineStyle>
+   <PolyStyle>
+    <color>
+     80DB9034
+    </color>
+   </PolyStyle>
+  </Style>
+  <Style id="pathStyle">
+   <LineStyle>
+    <color>
+     f8000080
+    </color>
+    <width>
+     8
+    </width>
+   </LineStyle>
+  </Style>
+  <Placemark>
+   <name>
+    Flight Name
+   </name>
+   <styleUrl>
+    #trackStyle
+   </styleUrl>
+   <gx:Track>
+    <altitudeMode>
+     absolute
+    </altitudeMode>
+    <extrude>
+     1
+    </extrude>
+    <gx:interpolate>
+     1
+    </gx:interpolate>
+    <when>
+     2018-06-24T10:22:15Z
+    </when>
+    <gx:coord>
+     -76.770862 39.108533 51.848816156837884
+    </gx:coord>
+   </gx:Track>
+  </Placemark>
+  <Placemark>
+   <name>
+    Start
+   </name>
+   <Point>
+    <coordinates>
+     -76.770862 39.108533
+    </coordinates>
+   </Point>
+  </Placemark>
+  <ExtendedData>
+   <SchemaData>
+    <gx:SimpleArrayData name="acc_horiz">
+     <gx:value>
+      10.2
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="acc_vert">
+     <gx:value>
+      8
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="course">
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="speed_kts">
+     <gx:value>
+      0.77598433056951
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="altitude">
+     <gx:value>
+      170.10767
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="bank">
+     <gx:value>
+      -2.2013729217108
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="pitch">
+     <gx:value>
+      -0.97934145732801
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="g_load">
+     <gx:value>
+      0.99847599584255
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="baro_altitude">
+     <gx:value>
+      153.32
+     </gx:value>
+    </gx:SimpleArrayData>
+    <gx:SimpleArrayData name="mag_heading">
+     <gx:value>
+      3276.7
+     </gx:value>
+    </gx:SimpleArrayData>
+   </SchemaData>
+   <Data name="source">
+    <displayName>
+     Source
+    </displayName>
+    <value>
+     Stratux
+    </value>
+   </Data>
+   <Data name="GPSModelName">
+    <value>
+     Stratux
+    </value>
+   </Data>
+   <Data name="flightTitle">
+    <value>
+     Flight Name
+    </value>
+   </Data>
+   <Data name="tailNumber">
+    <value/>
+   </Data>
+   <Data name="pilotNotes">
+    <value/>
+   </Data>
+   <Data name="routeWaypoints">
+    <displayName>
+     Route
+    </displayName>
+    <value/>
+   </Data>
+  </ExtendedData>
+ </Document>
+</kml>

@@ -18,7 +18,7 @@ class ProdConfig(Config):
     DEBUG = False
     STRATUX_PORT = 80
     STRATUX_HOSTNAME = "localhost" 
-    db_name = 'prod.db'
+    db_name = 'prod.sqlite3'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(Config.DB_PATH, 
         db_name))
 
@@ -30,7 +30,7 @@ class DevConfig(Config):
     STRATUX_PORT = 80
     STRATUX_HOSTNAME = "192.168.10.1" 
     DEBUG = True
-    db_name = 'dev.db'
+    db_name = 'dev.sqlite3'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(Config.DB_PATH, 
         db_name))
     print(SQLALCHEMY_DATABASE_URI)
