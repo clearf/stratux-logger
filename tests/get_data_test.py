@@ -1,6 +1,7 @@
 import os, json, sys
 import logging as lg
 import unittest
+import time
 from bs4 import BeautifulSoup
 from device.logger import StratuxLogger
 from device.processor import ProcessFlight
@@ -39,9 +40,11 @@ class TestLogStratux(unittest.TestCase):
     def test_we_can_save_a_flight_to_the_database(self):
         stl = StratuxLogger(self.app)
         flight_id = stl.logFlight()
-        flight = self.app.db.session.query(Flight).first()
+        session = self.app.db.Session()
+        flight = session.query(Flight).first()
         self.assertTrue(flight)
         self.assertTrue(flight_id)
+        self.app.db.Session.remove()
 
     def test_we_can_save_a_snapshot_to_the_database(self):
         stl = StratuxLogger(self.app)
@@ -49,17 +52,22 @@ class TestLogStratux(unittest.TestCase):
         self.log.debug("Flight ID: {0}".format(flight_id))
         stl.saveSnapshotToDb(flight_id)
 
-        db_snapshot = self.app.db.session.query(Situation).first()
+        session = self.app.db.Session()
+        db_snapshot = session.query(Situation).first()
 
-        flights = self.app.db.session.query(Flight).all()
+        session = self.app.db.Session()
+        flights = session.query(Flight).all()
 
         self.log.debug("Flights: {0}".format(flights))
+
+        self.app.db.Session.remove()
 
         # Test that something has been inserted
         self.assertTrue(db_snapshot)
         model_to_dict = lambda obj: {c.key: getattr(obj, c.key)
             for c in inspect(obj).mapper.column_attrs}        
         db_snapshot_dict = model_to_dict(db_snapshot)
+        self.app.db.Session.remove()
 
 
         # Do a two-way comparison
@@ -77,6 +85,19 @@ class TestRunApp(unittest.TestCase):
         lg.basicConfig( stream=sys.stderr )
         lg.getLogger("TestLogStratux").setLevel(lg.INFO)
         self.log = lg.getLogger("TestLogStratux")
+
+    #def test_we_can_save_a_snapshot(self):
+     #   runs = 3
+     #   self.app.loop(runs=runs)
+     #   time.sleep(5)
+#
+#        session = self.app.db.Session()
+#        logged = count(session.query(Situation).all())
+#        self.app.db.Session.remove()
+#        self.assertEqual(logged, runs)
+        
+        
+
 
 class TestProcessFlight(unittest.TestCase):
     def setUp(self):
@@ -110,7 +131,7 @@ class TestProcessFlight(unittest.TestCase):
     def test_we_can_write_kml_file(self):
         kml = self.process_flight.write_kml_file()
         now = datetime.now().strftime('%Y-%m-%dT%H_%M_%SZ')
-        with open(os.path.join(self.reference_dir, "situationTracklog.kml"), 'r') as data:
+        with open(os.path.join(self.reference_dir, "basic_tracklog.kml"), 'r') as data:
             kml_reference  = BeautifulSoup(data, 'lxml-xml')
         self.assertTrue(kml, kml_reference)
 
